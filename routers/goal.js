@@ -1,8 +1,7 @@
 const router = require('express').Router();
 const goalCtrl = require('../controllers/goal');
-router.get('/all', goalCtrl.getAll);
-router.post('/new', goalCtrl.createGoal);
-router.put('/:_id', goalCtrl.updateGoal);
-router.delete('/:_id', goalCtrl.deleteGoal);
+
+router.route('/').get(goalCtrl.getAll).post(goalCtrl.createGoal);
+router.route('/:_id').put(goalCtrl.updateGoal).delete(goalCtrl.deleteGoal);
 
 module.exports = router;
