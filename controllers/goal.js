@@ -23,8 +23,7 @@ exports.createGoal = asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error('Empty field');
     }
-    goal = new Goal({ ...req.body });
-    await goal.save();
+    await Goal.create({...req.body})
     res.status(200).send({ msg: 'New Goal Created!' });
 });
 
