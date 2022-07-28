@@ -5,8 +5,13 @@ const { Schema } = mongoose;
 const GoalSchema = new Schema({
     text: {
         type: String,
-        required: true
+        required: true,
     },
+    userId: {
+        type: mongoose.Schema.Types.String,
+        ref: 'User',
+        require:true
+    }
 }, {
     timestamps: true
 });

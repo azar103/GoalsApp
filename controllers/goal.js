@@ -1,10 +1,13 @@
 const Goal = require('../models/Goal');
+const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
+
 //@desc Get goals
 //@route GET /api/goals
 //@access Private
 exports.getAll = asyncHandler(async (req, res, next) => {
-        const goals = await Goal.find();
+   
+        const goals = await Goal.find({userId: req.user._id});
         res.status(200).send(goals);
 });
 
@@ -19,11 +22,17 @@ exports.createGoal = asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error('the goal exist');
     }
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        res.status(400);
+        throw new Error('User not found');
+    }
     if (!text) {
         res.status(400);
         throw new Error('Empty field');
     }
-    await Goal.create({...req.body})
+
+    await Goal.create({ text, userId: req.user._id });
     res.status(200).send({ msg: 'New Goal Created!' });
 });
 
@@ -32,16 +41,18 @@ exports.createGoal = asyncHandler(async (req, res, next) => {
 //@access Private
 exports.updateGoal = asyncHandler(async (req, res, next) => {
     const { _id } = req.params;
-    const goal = await Goal.findById(_id);
+    const goal = await Goal.findById(_id);    
     if (!goal) {
         res.status(400);
         throw new Error('Goal not found')
     }
-    await Goal.updateOne({
-        _id, $set: {
-            ...req.body
+    await Goal.updateOne(
+        { _id }, {
+        $set: {
+            text: req.body.text
         }
-    });
+    }
+    );
 
     res.status(200).send({msg:'Goal Updated!'})
 });
