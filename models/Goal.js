@@ -8,8 +8,8 @@ const GoalSchema = new Schema({
         required: true,
     },
     userId: {
-        type: mongoose.Schema.Types.String,
-        ref: 'User',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         require:true
     }
 }, {

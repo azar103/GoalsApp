@@ -46,6 +46,15 @@ exports.updateGoal = asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error('Goal not found')
     }
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        res.status(401);
+        throw new Error('User not found');
+    }
+    if (goal.userId.toString() !== user.id) {
+        res.status(401)
+        throw new Error('User not authoorizd')
+    }
     await Goal.updateOne(
         { _id }, {
         $set: {
@@ -67,6 +76,16 @@ exports.deleteGoal = asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error('Goal not found')
     }
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        res.status(401);
+        throw new Error('User not found');
+    }
+    if (goal.userId.toString() !== user.id) {
+        res.status(401)
+        throw new Error('User not authoorizd')
+    }
+    
     await Goal.deleteOne({ _id });
     res.status(200).send({ msg: 'Goal Deleted' });
 });

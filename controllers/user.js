@@ -23,7 +23,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     user = new User({ username, email, password });
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
-    const token = generateToken({ _id: user.id });
+    const token = generateToken(user.id);
     await user.save();
     res.status(200).send({ user, token: `Bearer ${token}`,msg:'a new user is created'});
 });
@@ -49,7 +49,7 @@ exports.login = asyncHandler(async (req, res, next) => {
         throw new Error('invalid credentials')
     }
 
-    const token = generateToken({ _id: user.id });
+    const token = generateToken(user.id);
     res.status(200).send({ user, token:`Bearer ${token}`,msg:'login success'});
  });
 exports.getCurrentUser = asyncHandler(async (req, res, next) => { 
@@ -61,8 +61,10 @@ exports.getCurrentUser = asyncHandler(async (req, res, next) => {
 //@route GET /api/users/current
 //@access Private
 
-const generateToken = (payload) => {
-    return jwt.sign(payload, process.env.SECRET_KEY, {
+const generateToken = (_id) => {
+    return jwt.sign({
+        _id
+    }, process.env.SECRET_KEY, {
         expiresIn:'30d'
     })
 }
